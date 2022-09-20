@@ -21,6 +21,7 @@ plt.grid()
 plt.legend(['number of pixels'])
 
 
+
 #%% Calculate 1920x1080 Full High Detinition Resolution
 ifov_H = 1800/1920 # in degrees
 ifov_V = 1800/1080 # in degrees
