@@ -7,6 +7,48 @@ Created on Tue Sep 20 00:40:59 2022
 
 import numpy as np
 import matplotlib.pyplot as plt
+
+f1 = 3 # mm
+f2 = -1000 # mm
+t = 25 # mm (Distance to negative lens) 
+t = np.arange(10, 51 ,1)
+n = 1 # refractive index in Air
+
+power1 = 1/f1
+power2 = 1/f2
+tau = t/n
+power_total = power1 + power2 + power1*power2*tau
+f_total = 1/power_total
+
+d_front = (power2/power_total)*t
+d_rear = (power1/power_total)*t
+
+s_object = -f1 - d_front
+s_image = f_total*s_object/(f_total+s_object)
+
+# (a) Magnification
+m = s_image/s_object
+
+# (b) Virtual image size
+display_pixels = 4*10**-3 # mm
+display_h = 1920*display_pixels
+display_v = 1080*display_pixels
+
+virtaul_image_h = m * display_h
+virtual_image_v = m * display_v
+
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, f_total,'r')
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, m,'m')
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, virtaul_image_h,'g')
+plt.grid()
+
+
+
+
+
 #%% number of pixels vs IFOV
 ifov = np.linspace(1,4.5,36)
 n_pixels = 30/(ifov/60)
@@ -84,32 +126,3 @@ plt.xticks([1,2,3,4])
 plt.ylim([0,0.3])
 plt.grid()
 plt.legend(['collection efficiency'])
-
-#%%
-
-#%%
-# fov_degree = np.linspace(0,30,31)
-
-d = 3 # Pupil Diameter in mm
-p = 4*10**-3  # Pixel size in mm
-fov = np.deg2rad(30) # FOV 30 deg
-f = d/(2*np.sin(fov)) # focal length in mm
-fnumber = f/d 
-ifov = np.arctan(p/f) 
-
-plt.plot(fov,ifov)
-
-#%%
-
-plt.figure(dpi=300)
-plt.plot(x, mtf_500um)
-plt.title('')
-plt.xlabel('Line Density X (cycles/mm)')
-plt.ylabel('MTF (normalized)')
-plt.grid()
-
-#%%
-
-
-
-
