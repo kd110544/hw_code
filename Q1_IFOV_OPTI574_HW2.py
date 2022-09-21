@@ -38,15 +38,37 @@ virtaul_image_h = m * display_h
 virtual_image_v = m * display_v
 
 plt.figure(dpi=300,figsize=(4,4))
-plt.plot(t, f_total,'r')
-plt.figure(dpi=300,figsize=(4,4))
-plt.plot(t, m,'m')
-plt.figure(dpi=300,figsize=(4,4))
-plt.plot(t, virtaul_image_h,'g')
+plt.plot(t,f_total,'r')
+plt.title('Focal length vs Distance to negative lens')
+plt.xlabel('t (mm)')
+plt.xlim([max(t),min(t)])
+plt.ylabel('system focal length (mm)')
 plt.grid()
 
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, m,'m')
+plt.title('Magnification vs Distance to negative lens')
+plt.xlabel('t (mm)')
+plt.xlim([max(t),min(t)])
+plt.ylabel('m')
+plt.grid()
 
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, virtaul_image_h,'g')
+plt.title('Virtual Image Height vs Distance to negative lens')
+plt.xlabel('t (mm)')
+plt.xlim([max(t),min(t)])
+plt.ylabel('virtual image height (mm)')
+plt.grid()
 
+plt.figure(dpi=300,figsize=(4,4))
+plt.plot(t, s_image,'deepskyblue')
+plt.title("s' vs t")
+plt.xlabel('t (mm)')
+plt.xlim([40,min(t)])
+plt.ylabel('The distance to the resulting image (mm)')
+plt.ylim([max(s_image),min(s_image)])
+plt.grid()
 
 
 #%% number of pixels vs IFOV
