@@ -5,13 +5,37 @@ Created on Tue Sep 20 00:40:59 2022
 @author: cwchan
 """
 
+#%%
+
+f1 = 3 # mm
+f2 = -1000 # mm
+t = 25 # mm (Distance to negative lens) 
+n = 1 # refractive index in Air
+
+power1 = 1/f1
+power2 = 1/f2
+tau = t/n
+power_total = power1 + power2 + power1*power2*tau
+f_total = 1/power_total
+
+d_front = (power2/power_total)*t
+d_rear = (power1/power_total)*t
+
+s_object = -f1 - d_front
+s_image = f_total*s_object/(f_total+s_object)
+
+# distance from image of display panel to the negative lens
+distance_img_to_neg_lens = s_image + d_rear
+
+
+#%%
 import numpy as np
 import matplotlib.pyplot as plt
 
 f1 = 3 # mm
 f2 = -1000 # mm
-t = 25 # mm (Distance to negative lens) 
-t = np.arange(10, 51 ,1)
+
+t = np.arange(10, 51 ,1)  # mm (Distance to negative lens) 
 n = 1 # refractive index in Air
 
 power1 = 1/f1
@@ -63,7 +87,7 @@ plt.grid()
 
 plt.figure(dpi=300,figsize=(4,4))
 plt.plot(t, s_image,'deepskyblue')
-plt.title("s' vs t")
+plt.title("s' vs Distance to negative lens")
 plt.xlabel('t (mm)')
 plt.xlim([40,min(t)])
 plt.ylabel('The distance to the resulting image (mm)')
@@ -92,6 +116,9 @@ ifov_V = 1800/1080 # in degrees
 
 
 #%% focal length vs IFOV
+import numpy as np
+import matplotlib.pyplot as plt
+
 p = 4*10**-3  # Pixel size in mm
 
 ifov = np.linspace(1,4.5,36)
