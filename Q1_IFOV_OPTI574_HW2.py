@@ -15,18 +15,20 @@ n = 1 # refractive index in Air
 power1 = 1/f1
 power2 = 1/f2
 tau = t/n
-power_total = power1 + power2 + power1*power2*tau
+power_total = power1 + power2 - power1*power2*tau
 f_total = 1/power_total
 
 d_front = (power2/power_total)*t
 d_rear = (power1/power_total)*t
 
 s_object = -f1 - d_front
+# s_image = 1/((1/f_total)+(1/s_object))
 s_image = f_total*s_object/(f_total+s_object)
 
 # distance from image of display panel to the negative lens
 distance_img_to_neg_lens = s_image + d_rear
-
+# magnification/
+m = s_image/s_object
 
 #%%
 import numpy as np
@@ -34,14 +36,14 @@ import matplotlib.pyplot as plt
 
 f1 = 3 # mm
 f2 = -1000 # mm
-
-t = np.arange(10, 51 ,1)  # mm (Distance to negative lens) 
+t = 25  # mm (Distance to negative lens) 
+# t = np.arange(10, 51 ,1)  # mm (Distance to negative lens) 
 n = 1 # refractive index in Air
 
 power1 = 1/f1
 power2 = 1/f2
 tau = t/n
-power_total = power1 + power2 + power1*power2*tau
+power_total = power1 + power2 - power1*power2*tau
 f_total = 1/power_total
 
 d_front = (power2/power_total)*t
@@ -61,6 +63,7 @@ display_v = 1080*display_pixels
 virtaul_image_h = m * display_h
 virtual_image_v = m * display_v
 
+#%%
 plt.figure(dpi=300,figsize=(4,4))
 plt.plot(t,f_total,'r')
 plt.title('Focal length vs Distance to negative lens')
