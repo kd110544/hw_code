@@ -59,16 +59,19 @@ hfov, vfov = set_data_points(fov_x, fov_y, points)
 plot_cartesian_space(hfov,vfov,legend = 'input')
 
 #%%
-azimuth = 45 # in degree
+plt.figure(dpi=600)
 kx = []
 ky = []
+
+# cartesian to k-space
 for i in range(0,len(hfov)):
-    phi = np.deg2rad(azimuth)
+    # Define θ (theta)
     theta_x = np.deg2rad(hfov[i])
     theta_y = np.deg2rad(vfov[i])
     tan_theta_x = np.tan(theta_x)
     tan_theta_y = np.tan(theta_y)
     theta = np.rad2deg(np.arctan(np.sqrt((tan_theta_x**2)+(tan_theta_y**2))))
+    # Define φ (phi)
     if tan_theta_x == 0:
         if tan_theta_y > 0:
             phi = 90
@@ -76,32 +79,104 @@ for i in range(0,len(hfov)):
             phi = -90
     else:
         phi = np.rad2deg(np.arctan2(tan_theta_y,tan_theta_x))
-    # print(f'phi_{i} = {phi}')
-    # print(f'theta_{i} = {theta}')
-    # print(f'tan_theta_x_{i} = {tan_theta_x}')
-    # print(f'tan_theta_y_{i} = {tan_theta_y}')
+    # Calculate kx & ky
     kx.append(np.cos(np.deg2rad(phi)) * np.sin(np.deg2rad(theta)))
     ky.append(np.sin(np.deg2rad(phi)) * np.sin(np.deg2rad(theta)))
     
-plt.figure(dpi=300)
+# plot grating vector
 plt.plot(kx,ky,'s-b',markersize='2')
+
+
+## IG (Iput grating vector)
+m = 1 # diffacted order
+lambda_grating = 640 # in nm
+pitch = 380 # in nm (input grating)
+rotation_angle = np.deg2rad(-90)
+kx_unit_vector = 1
+ky_unit_vector = 1
+k1_x = (m*lambda_grating/pitch)*(np.cos(rotation_angle)*kx_unit_vector)
+k1_y = (m*lambda_grating/pitch)*(np.sin(rotation_angle)*ky_unit_vector)
+
+kx_after_IG = []
+ky_after_IG = []
+for i in range(0,len(kx)):
+    kx_after_IG.append(kx[i]+k1_x)
+    ky_after_IG.append(ky[i]+k1_y)
+    
+# plot IG grating vector
+plt.plot(kx_after_IG,ky_after_IG,'s-y',markersize='2')
+
+
+## EG (Expansion grating vector)
+# m = 1 # diffacted order
+# lambda_grating = 640 # in nm
+pitch = 268.7 # in nm (input grating)
+rotation_angle = np.deg2rad(45)
+kx_unit_vector = 1
+ky_unit_vector = 1
+k2_x = (m*lambda_grating/pitch)*(np.cos(rotation_angle)*kx_unit_vector)
+k2_y = (m*lambda_grating/pitch)*(np.sin(rotation_angle)*ky_unit_vector)
+
+kx_after_EG = []
+ky_after_EG = []
+for i in range(0,len(kx)):
+    kx_after_EG.append(kx_after_IG[i]+k2_x)
+    ky_after_EG.append(ky_after_IG[i]+k2_y)
+    
+# plot EG grating vector
+plt.plot(kx_after_EG,ky_after_EG,'s-g',markersize='2')
+
+
+## EG (Expansion grating vector)
+# m = 1 # diffacted order
+# lambda_grating = 640 # in nm
+pitch = 380 # in nm (input grating)
+rotation_angle = np.deg2rad(-180)
+kx_unit_vector = 1
+ky_unit_vector = 1
+k3_x = (m*lambda_grating/pitch)*(np.cos(rotation_angle)*kx_unit_vector)
+k3_y = (m*lambda_grating/pitch)*(np.sin(rotation_angle)*ky_unit_vector)
+
+kx_after_OG = []
+ky_after_OG = []
+for i in range(0,len(kx)):
+    kx_after_OG.append(kx_after_EG[i]+k3_x)
+    ky_after_OG.append(ky_after_EG[i]+k3_y)
+    
+# plot EG grating vector
+plt.plot(kx_after_OG,ky_after_OG,'s-r',markersize='2')
+
+# plot inner TIR limit circle
+radius = 1 # in air
+angle = np.linspace(0, 2*np.pi, 100) 
+a = radius * np.cos(angle) 
+b = radius * np.sin(angle) 
+plt.plot(a,b,linewidth='1')
+
+# plot outer limit circle
+substrate_index = 2 # in substrate
+max_angle_allowed_inside_waveguide = np.deg2rad(80)
+radius = substrate_index * np.sin(max_angle_allowed_inside_waveguide)
+angle = np.linspace(0, 2*np.pi, 100) 
+a = radius * np.cos(angle) 
+b = radius * np.sin(angle) 
+plt.plot(a,b,linewidth='1')
+
+
 plt.title('k-space',fontsize='12')
 plt.xlabel('kx',fontsize='12')
 plt.ylabel('ky',fontsize='12')
+plt.xticks(np.arange(-2,2+.5,.5),fontsize='8')
+plt.yticks(np.arange(-2,2+.5,.5),fontsize='8')
 plt.xlim([-2,2])
 plt.ylim([-2,2])
-plt.legend(['input'],loc='upper right')
+plt.legend(['input','after IG','after EG','after OG','inner TIR limit','outer limit'],loc='upper right',fontsize=6)
 plt.gca().set_aspect('equal','box')
 
-# plot the circles (waveguide)
-for i in range(1,3):
-    angle = np.linspace(0, 2*np.pi, 100) 
-    radius = i
-    a = radius * np.cos(angle) 
-    b = radius * np.sin(angle) 
-    plt.plot(a,b,'black',linewidth='1')
+#%%
 
 
+"""
 #%%
 
 fov_x = 30
@@ -230,6 +305,7 @@ plt.ylabel('Cartesian y angle (deg)')
 # plt.ylabel('system focal length (mm)')
 # plt.grid()
 
+"""
 
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
@@ -238,4 +314,3 @@ Created on Sun Oct  2 12:18:27 2022
 
 @author: cwchan
 """
-
