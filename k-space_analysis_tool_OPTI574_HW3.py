@@ -40,7 +40,7 @@ def set_data_points(fov_x,fov_y,points):
 
 def plot_cartesian_space(hfov,vfov,half_fov=15,legend='input',style='s-b'):
     # default axis limit = 30 deg, default legend = 'input'
-    plt.figure(dpi=300)
+    # plt.figure(1,dpi=300)
     plt.plot(hfov,vfov,style,markersize='4')
     plt.title('x/y Cartesian space',fontsize='12')
     plt.xlabel('Cartesian x angle (deg)',fontsize='12')
@@ -56,7 +56,7 @@ fov_y = 18
 points = 5
 
 hfov, vfov = set_data_points(fov_x, fov_y, points)
-plot_cartesian_space(hfov,vfov,legend = 'input')
+# plot_cartesian_space(hfov,vfov,legend = 'input')
 
 #%%
 plt.figure(dpi=600)
@@ -110,7 +110,7 @@ plt.plot(kx_after_IG,ky_after_IG,'s-y',markersize='2')
 ## EG (Expansion grating vector)
 # m = 1 # diffacted order
 # lambda_grating = 640 # in nm
-pitch = 268.7 # in nm (input grating)
+pitch = 268.7 # in nm (expansion grating)
 rotation_angle = np.deg2rad(45)
 kx_unit_vector = 1
 ky_unit_vector = 1
@@ -127,10 +127,10 @@ for i in range(0,len(kx)):
 plt.plot(kx_after_EG,ky_after_EG,'s-g',markersize='2')
 
 
-## EG (Expansion grating vector)
+## OG (Output grating vector)
 # m = 1 # diffacted order
 # lambda_grating = 640 # in nm
-pitch = 380 # in nm (input grating)
+pitch = 380 # in nm (output grating)
 rotation_angle = np.deg2rad(-180)
 kx_unit_vector = 1
 ky_unit_vector = 1
@@ -173,6 +173,42 @@ plt.ylim([-2,2])
 plt.legend(['input','after IG','after EG','after OG','inner TIR limit','outer limit'],loc='upper right',fontsize=6)
 plt.gca().set_aspect('equal','box')
 
+#%%
+# k-space to cartesian
+kz = []
+theta_x_after_OG = []
+theta_y_after_OG = []
+for i in range(0,len(kx_after_OG)):
+    # Define kz 
+    kz.append(np.sqrt(1-kx_after_OG[i]**2-ky_after_OG[i]**2))
+    theta_x_after_OG.append(np.rad2deg(np.arctan2(kx[i],kz[i])))
+    theta_y_after_OG.append(np.rad2deg(np.arctan2(ky[i],kz[i])))
+
+plt.figure(dpi=600)
+plot_cartesian_space(hfov,vfov,legend = 'input',style='s-b')
+plot_cartesian_space(theta_x_after_OG,theta_y_after_OG,legend = 'output',style='s-r')
+# plt.plot(theta_x_after_OG,theta_y_after_OG,'s-r')
+#%%    
+    # Define θ (theta)
+    theta_x = np.deg2rad(hfov[i])
+    theta_y = np.deg2rad(vfov[i])
+    tan_theta_x = np.tan(theta_x)
+    tan_theta_y = np.tan(theta_y)
+    theta = np.rad2deg(np.arctan(np.sqrt((tan_theta_x**2)+(tan_theta_y**2))))
+    # Define φ (phi)
+    # if tan_theta_x == 0:
+    #     if tan_theta_y > 0:
+    #         phi = 90
+    #     else: 
+    #         phi = -90
+    # else:
+    #     phi = np.rad2deg(np.arctan2(tan_theta_y,tan_theta_x))
+    # Calculate kx & ky
+    kx.append(np.cos(np.deg2rad(phi)) * np.sin(np.deg2rad(theta)))
+    ky.append(np.sin(np.deg2rad(phi)) * np.sin(np.deg2rad(theta)))
+    
+# plot grating vector
+plt.plot(kx,ky,'s-b',markersize='2')
 #%%
 
 
