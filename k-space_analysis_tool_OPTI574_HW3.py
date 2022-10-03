@@ -41,7 +41,7 @@ def set_data_points(fov_x,fov_y,points):
 def plot_cartesian_space(hfov,vfov,half_fov=15,legend='input',style='s-b'):
     # default axis limit = 30 deg, default legend = 'input'
     plt.figure(dpi=300)
-    plt.plot(hfov,vfov,style)
+    plt.plot(hfov,vfov,style,markersize='4')
     plt.title('x/y Cartesian space',fontsize='12')
     plt.xlabel('Cartesian x angle (deg)',fontsize='12')
     plt.ylabel('Cartesian y angle (deg)',fontsize='12')
@@ -84,15 +84,22 @@ for i in range(0,len(hfov)):
     ky.append(np.sin(np.deg2rad(phi)) * np.sin(np.deg2rad(theta)))
     
 plt.figure(dpi=300)
-plt.plot(kx,ky,'s-b')
+plt.plot(kx,ky,'s-b',markersize='2')
 plt.title('k-space',fontsize='12')
 plt.xlabel('kx',fontsize='12')
 plt.ylabel('ky',fontsize='12')
 plt.xlim([-2,2])
 plt.ylim([-2,2])
-plt.legend(['input'])
+plt.legend(['input'],loc='upper right')
 plt.gca().set_aspect('equal','box')
 
+# plot the circles (waveguide)
+for i in range(1,3):
+    angle = np.linspace(0, 2*np.pi, 100) 
+    radius = i
+    a = radius * np.cos(angle) 
+    b = radius * np.sin(angle) 
+    plt.plot(a,b,'black',linewidth='1')
 
 
 #%%
