@@ -16,6 +16,14 @@ Instructor: Dr. Eric Fest (Optical Scientist at Meta Inc.)
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Input system spec here
+fov_x = 24 # in degree
+fov_y = 18 # in degree
+points = 9 # number of points at each side
+substrate_index = 1.8
+max_angle_allowed_inside_waveguide = np.deg2rad(80)
+wavelength = 532 # in nm
+
 def set_data_points(fov_x,fov_y,points):
     interval = points - 1
     cx= np.arange(-fov_x/2,fov_x/2+fov_x/interval,fov_x/interval)
@@ -103,7 +111,7 @@ def point_removal_check(kx,ky):
             pass
     return kx_chopped,ky_chopped
     
-def plt_cartesian_space(hfov,vfov,half_fov=20,style='s-b'):
+def plt_cartesian_space(hfov,vfov,half_fov=15,style='s-b'):
     # default axis limit = 30 deg, default legend = 'input'
     plt.plot(hfov,vfov,style,markersize='4')
     plt.title('x/y Cartesian space',fontsize='12')
@@ -120,14 +128,6 @@ def plt_circle(radius=1):
     b = radius * np.sin(angle) 
     plt.plot(a,b,linewidth='1')
     
-
-# Input system spec here
-fov_x = 30
-fov_y = 18
-points = 5
-substrate_index = 2
-max_angle_allowed_inside_waveguide = np.deg2rad(80)
-wavelength = 450
 
 # get x/y Cartesian data points
 hfov, vfov = set_data_points(fov_x, fov_y, points)
@@ -180,144 +180,3 @@ plt.xlim([-2,2])
 plt.ylim([-2,2])
 plt.legend(['input','after IG','after EG','after OG','inner TIR limit','outer limit'],loc='upper right',fontsize=6)
 plt.gca().set_aspect('equal','box')
-
-#%%
-
-"""
-#%%
-
-fov_x = 30
-fov_y = 18
-points = 5
-interval = points - 1
-cx = np.arange(-fov_x/2,fov_x/2+fov_x/interval,fov_x/interval)
-cy = np.arange(-fov_y/2,fov_y/2+fov_y/interval,fov_y/interval)
-
-x = []
-y = []
-
-for i in range(0,points):
-    x.append(cx[i])
-    y.append(cy[0])
-for i in range(0,points):
-    x.append(cx[-1])
-    y.append(cy[i])
-for i in range(0,points):
-    x.append(cx[len(cx)-1-i])
-    y.append(cy[-1])
-for i in range(0,points):
-    x.append(cx[0])
-    y.append(cy[len(cy)-1-i])
-
-
-plt.figure(dpi=300)
-plt.plot(x,y,'s-r')
-
-plt.title('x/y Cartesian space')
-plt.xlabel('Cartesian x angle (deg)')
-plt.ylabel('Cartesian y angle (deg)')
-plt.xlim([-15,15])
-plt.ylim([-15,15])
-plt.legend(['input'])
-plt.gca().set_aspect('equal', adjustable='box')
-
-#%%
-
-
-x = [-15,-7.5,0,7.5,15]
-x_right = [15,15,15,15,15]
-x_left = [-x for x in x_right]
-
-y = [-9,-4.5,0,4.5,9]
-y_top = [9,9,9,9,9]
-y_buttom = [-x for x in y_top]
-# c = [-9,-4.5,0,4.5,9]
-# b = [-15,-15,-15,-15,-15]
-# c = [15,15,15,15,15]
-plt.figure(dpi=300)
-plt.plot(x,y_top,'s-r')
-plt.plot(x,y_buttom,'s-r')
-plt.plot(x_right,y,'s-r')
-plt.plot(x_left,y,'s-r')
-plt.title('x/y Cartesian space')
-plt.xlabel('Cartesian x angle (deg)')
-plt.ylabel('Cartesian y angle (deg)')
-plt.xlim([-15,15])
-plt.ylim([-15,15])
-plt.legend('input')
-plt.gca().set_aspect('equal', adjustable='box')
-
-#%%
-
-x = 30
-y = 18
-pts = 5 
-
-interval = pts-1
-cx = np.arange(-x/2,x/2+x/interval,x/interval)
-cy = np.arange(-y/2,y/2+y/interval,y/interval)
-
-
-edge_of_space = []
-for i, j in zip(range(0,len(cx)),range(0,len(cy))):
-    edge_of_space.append([cx[0],cy[j]])
-
-plt.plot(edge_of_space[0],edge_of_space[1])
-
-#%%
-def set_data_points(x,y,pts):
-    interval = pts-1
-    cx = np.arange(-x/2,x/2+x/interval,x/interval)
-    cy = np.arange(-y/2,y/2+y/interval,y/interval)
-    
-    edge_of_space = []
-    for i in cx:
-        edge_of_space.append(cx[i])
-    
-    return cx,cy,edge_of_space
-
-cartesian_x, cattesian_y,edge_of_space = set_data_points(30,18,5)
-
-
-#%%
-
-def cartesian_to_k_space(elevation_x, elevation_y, azimuth, number_of_points=5):
-    theta_x = np.arange(-elevation_x/2, elevation_x/2, (elevation_x/number_of_points))
-    theta_y = np.arange(-elevation_y/2, elevation_y/2, elevation_y/number_of_points)
-    phi = azimuth
-    kx = np.cos(phi) * np.sin(theta_x)
-    ky = np.sin(phi) * np.cos(theta_y)
-    return theta_x, theta_y, kx, ky
-    
-rotation_angle = -90
-fov_x = 30
-fov_y = 18
-
-
-
-theta_x, theta_y, kx, ky = cartesian_to_k_space(fov_x, fov_y, rotation_angle)
-
-plt.figure(dpi=300)
-plt.plot(theta_x, theta_y ,'r')
-plt.plot(kx,ky,'blue')
-plt.title('x/y Cartesian space')
-plt.xlabel('Cartesian x angle (deg)')
-plt.ylabel('Cartesian y angle (deg)')
-
-# plt.figure(dpi=300,figsize=(4,4))
-# plt.plot(t,f_total,'r')
-# plt.title('Focal length vs Distance to negative lens')
-# plt.xlabel('t (mm)')
-# plt.xlim([max(t),min(t)])
-# plt.ylabel('system focal length (mm)')
-# plt.grid()
-
-"""
-
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Sun Oct  2 12:18:27 2022
-
-@author: cwchan
-"""
