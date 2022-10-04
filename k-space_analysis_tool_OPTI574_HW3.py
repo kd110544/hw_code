@@ -12,7 +12,7 @@ Instructor: Dr. Eric Fest (Optical Scientist at Meta Inc.)
 @studentID: 23550910
 
 """
-#%%
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -91,8 +91,19 @@ def model_the_grating(kx, ky, m, lambda_grating, pitch, rotation_angle):
         ky_after_grating.append(ky[i]+k1_y)
     
     return kx_after_grating, ky_after_grating
-  
-def plt_cartesian_space(hfov,vfov,half_fov=15,style='s-b'):
+
+def point_removal_check(kx,ky):
+    kx_chopped = []
+    ky_chopped = []
+    for i in range(0,len(kx)):
+        if kx[i]**2 + ky[i] **2 >= 1:
+            kx_chopped.append(kx[i])
+            ky_chopped.append(ky[i])
+        else: 
+            pass
+    return kx_chopped,ky_chopped
+    
+def plt_cartesian_space(hfov,vfov,half_fov=20,style='s-b'):
     # default axis limit = 30 deg, default legend = 'input'
     plt.plot(hfov,vfov,style,markersize='4')
     plt.title('x/y Cartesian space',fontsize='12')
@@ -116,40 +127,51 @@ fov_y = 18
 points = 5
 substrate_index = 2
 max_angle_allowed_inside_waveguide = np.deg2rad(80)
+wavelength = 450
 
 # get x/y Cartesian data points
 hfov, vfov = set_data_points(fov_x, fov_y, points)
 
-# make a figure
-plt.figure(dpi=600)
-
 # Convert x/y Cartesian data points into k-space
 kx,ky = cartesian_to_k_space(hfov, vfov)
-plt.plot(kx,ky,'s-b',markersize='2')
 
 ## IG (Iput grating vector)
-kx_after_IG, ky_after_IG = model_the_grating(kx, ky, m=1, lambda_grating=640, pitch=380, rotation_angle=-90)
+kx_after_IG, ky_after_IG = model_the_grating(kx, ky, m=1, lambda_grating=wavelength, pitch=380, rotation_angle=-90)
+kx_after_IG, ky_after_IG = point_removal_check(kx_after_IG, ky_after_IG)
+
 ## EG (Expansion grating vector)
-kx_after_EG, ky_after_EG = model_the_grating(kx_after_IG, ky_after_IG, m=1, lambda_grating=640, pitch=268.7, rotation_angle=45)
+kx_after_EG, ky_after_EG = model_the_grating(kx_after_IG, ky_after_IG, m=1, lambda_grating=wavelength, pitch=268.7, rotation_angle=45)
+kx_after_EG, ky_after_EG = point_removal_check(kx_after_EG, ky_after_EG)
+
 ## OG (Output grating vector)
-kx_after_OG, ky_after_OG = model_the_grating(kx_after_EG, ky_after_EG, m=1, lambda_grating=640, pitch=380, rotation_angle=-180)
+kx_after_OG, ky_after_OG = model_the_grating(kx_after_EG, ky_after_EG, m=1, lambda_grating=wavelength, pitch=380, rotation_angle=-180)
 
 ## k-space to cartesian
 hfov_after_OG, vfov_after_OG = k_space_to_cartesian(kx_after_OG,ky_after_OG)
-  
-# plot grating vector
-plt.plot(kx_after_IG,ky_after_IG,'s-y',markersize='2')
-plt.plot(kx_after_EG,ky_after_EG,'s-g',markersize='2')
-plt.plot(kx_after_OG,ky_after_OG,'s-r',markersize='2')
-# plot inner TIR limit circle
-plt_circle()
-# plot outer limit circle
-plt_circle(radius = substrate_index * np.sin(max_angle_allowed_inside_waveguide))
+
+# =============================================================================
+# plot #1 setting
+# =============================================================================
+plt.figure(dpi=600)
+plt_cartesian_space(hfov,vfov,style='s-b')
+plt_cartesian_space(hfov_after_OG,vfov_after_OG,style='s-r')
+plt_cartesian_space(hfov_after_OG,vfov_after_OG,style='s-r')
+plt.legend(['input','output'],loc='upper right',fontsize=9)
 
 # =============================================================================
 #  plot #2 setting
 # =============================================================================
-plt.title('k-space',fontsize='12')
+plt.figure(dpi=600)
+# plot grating vector
+plt.plot(kx,ky,'s-b',markersize='2')
+plt.plot(kx_after_IG,ky_after_IG,'s-y',markersize='2')
+plt.plot(kx_after_EG,ky_after_EG,'s-g',markersize='2')
+plt.plot(kx_after_OG,ky_after_OG,'s-r',markersize='2')
+# plot inner TIR limit circle
+plt_circle(radius = 1)
+# plot outer limit circle
+plt_circle(radius = substrate_index * np.sin(max_angle_allowed_inside_waveguide))
+plt.title(f'k-space (λ={wavelength}nm)',fontsize='12')
 plt.xlabel('kx',fontsize='12')
 plt.ylabel('ky',fontsize='12')
 plt.xticks(np.arange(-2,2+.5,.5),fontsize='8')
@@ -158,14 +180,6 @@ plt.xlim([-2,2])
 plt.ylim([-2,2])
 plt.legend(['input','after IG','after EG','after OG','inner TIR limit','outer limit'],loc='upper right',fontsize=6)
 plt.gca().set_aspect('equal','box')
-
-# =============================================================================
-# plot #1 setting
-# =============================================================================
-plt.figure(dpi=600)
-plt_cartesian_space(hfov,vfov,style='s-b')
-plt_cartesian_space(hfov_after_OG,vfov_after_OG,style='s-r')
-plt.legend(['input','output'])
 
 #%%
 
