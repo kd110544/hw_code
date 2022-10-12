@@ -17,12 +17,31 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Input system spec here
-fov_x = 24 # in degree
+input_wavelength = 540 # in nm
+fov_x = 32 # in degree
 fov_y = 18 # in degree
-points = 9 # number of points at each side
-substrate_index = 1.8
+points = 5 # number of points at each side
+substrate_index = 2
 max_angle_allowed_inside_waveguide = np.deg2rad(80)
-wavelength = 532 # in nm
+
+
+# Miscellaneous settings
+cartesian_plot_fov          = 35 # in degree
+
+incoupling_grating_period   = 420     # in nm
+incoupling_rotation_angle   = 0       # in degree
+incoupling_grating_order    = 1       
+
+eye_pupil_expander_period   = 296.98  # in nm
+eye_pupil_expander_angle    = -45     # in degree
+eye_pupil_expander_order    = -1
+
+outcoupling_grating_period  = 420     # in nm
+outcoupling_rotation_angle  = 90      # in degree
+outcoupling_grating_order   = -1
+
+
+
 
 def set_data_points(fov_x,fov_y,points):
     interval = points - 1
@@ -136,15 +155,15 @@ hfov, vfov = set_data_points(fov_x, fov_y, points)
 kx,ky = cartesian_to_k_space(hfov, vfov)
 
 ## IG (Iput grating vector)
-kx_after_IG, ky_after_IG = model_the_grating(kx, ky, m=1, lambda_grating=wavelength, pitch=380, rotation_angle=-90)
+kx_after_IG, ky_after_IG = model_the_grating(kx, ky, m=incoupling_grating_order, lambda_grating=input_wavelength, pitch=incoupling_grating_period, rotation_angle=incoupling_rotation_angle)
 kx_after_IG, ky_after_IG = point_removal_check(kx_after_IG, ky_after_IG)
 
 ## EG (Expansion grating vector)
-kx_after_EG, ky_after_EG = model_the_grating(kx_after_IG, ky_after_IG, m=1, lambda_grating=wavelength, pitch=268.7, rotation_angle=45)
+kx_after_EG, ky_after_EG = model_the_grating(kx_after_IG, ky_after_IG, m=eye_pupil_expander_order, lambda_grating=input_wavelength, pitch=eye_pupil_expander_period, rotation_angle=eye_pupil_expander_angle)
 kx_after_EG, ky_after_EG = point_removal_check(kx_after_EG, ky_after_EG)
 
 ## OG (Output grating vector)
-kx_after_OG, ky_after_OG = model_the_grating(kx_after_EG, ky_after_EG, m=1, lambda_grating=wavelength, pitch=380, rotation_angle=-180)
+kx_after_OG, ky_after_OG = model_the_grating(kx_after_EG, ky_after_EG, m=outcoupling_grating_order, lambda_grating=input_wavelength, pitch=outcoupling_grating_period, rotation_angle=outcoupling_rotation_angle)
 
 ## k-space to cartesian
 hfov_after_OG, vfov_after_OG = k_space_to_cartesian(kx_after_OG,ky_after_OG)
@@ -153,9 +172,9 @@ hfov_after_OG, vfov_after_OG = k_space_to_cartesian(kx_after_OG,ky_after_OG)
 # plot #1 setting
 # =============================================================================
 plt.figure(dpi=600)
-plt_cartesian_space(hfov,vfov,style='s-b')
-plt_cartesian_space(hfov_after_OG,vfov_after_OG,style='s-r')
-plt_cartesian_space(hfov_after_OG,vfov_after_OG,style='s-r')
+plt_cartesian_space(hfov,vfov,half_fov=cartesian_plot_fov/2,style='s-b')
+plt_cartesian_space(hfov_after_OG,vfov_after_OG,half_fov=cartesian_plot_fov/2,style='s-r')
+plt_cartesian_space(hfov_after_OG,vfov_after_OG,half_fov=cartesian_plot_fov/2,style='s-r')
 plt.legend(['input','output'],loc='upper right',fontsize=9)
 
 # =============================================================================
@@ -171,7 +190,7 @@ plt.plot(kx_after_OG,ky_after_OG,'s-r',markersize='2')
 plt_circle(radius = 1)
 # plot outer limit circle
 plt_circle(radius = substrate_index * np.sin(max_angle_allowed_inside_waveguide))
-plt.title(f'k-space (λ={wavelength}nm)',fontsize='12')
+plt.title(f'k-space (λ={input_wavelength}nm)',fontsize='12')
 plt.xlabel('kx',fontsize='12')
 plt.ylabel('ky',fontsize='12')
 plt.xticks(np.arange(-2,2+.5,.5),fontsize='8')
