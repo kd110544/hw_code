@@ -18,43 +18,6 @@ System requirement:
 @Created on Mon Oct 17 13:06:30 2022
 """
 
-n = 1.5168  # Glass material = NBK7
-f = 100    # Focal length in mm
-number_of_element = 3
-
-power_sys = 1/f   # System power 
-phi = []          # power of each element       
-for i in range(0,number_of_element):
-    phi.append(power_sys/number_of_element)
-
-"""Step1: Calculate paraxial marginal ray slopes"""
-h = 1 # Assume the margianl ray heigth in the object space is 1mm
-u = []
-u_tilt = []
-u.append(0) # Object is located at infinity
-for i in range(0,number_of_element):
-    u_tilt.append(u[i]-h*phi[i])
-    u.append(u_tilt[i])
-u.remove(u[-1])
-
-"""Step2: Calculate conjugate factors"""
-c = []
-for i in range(0,number_of_element):
-    c.append((u[i]+u_tilt[i])/(u[i]-u_tilt[i]))
-
-"""Step3: Calculate the optimum shape factors"""
-b_opt = []
-for i in range(0,number_of_element):
-    b_opt.append(-2*(n**2-1)*c[i]/(n+2))
-
-"""Step4: Calculate radius of surfaces"""
-r = []
-for i in range(0,number_of_element):
-    r.append(2*(n-1)/(phi[i]*(b_opt[i]+1)))
-    r.append(2*(n-1)/(phi[i]*(b_opt[i]-1)))
-
-
-
 #%% Step by step
 n = 1.5168  # Glass material = NBK7
 f = 100     # Focal length in mm
@@ -98,3 +61,43 @@ r3 = 2*(n-1)/(power_L2*(b2_opt+1))
 r4 = 2*(n-1)/(power_L2*(b2_opt-1))
 r5 = 2*(n-1)/(power_L3*(b3_opt+1))
 r6 = 2*(n-1)/(power_L3*(b3_opt-1))
+
+
+
+
+#%% Calculator
+n = 1.5168  # Glass material = NBK7
+f = 100    # Focal length in mm
+number_of_element = 3
+
+power_sys = 1/f   # System power 
+phi = []          # power of each element       
+for i in range(0,number_of_element):
+    phi.append(power_sys/number_of_element)
+
+"""Step1: Calculate paraxial marginal ray slopes"""
+h = 1 # Assume the margianl ray heigth in the object space is 1mm
+u = []
+u_tilt = []
+u.append(0) # Object is located at infinity
+for i in range(0,number_of_element):
+    u_tilt.append(u[i]-h*phi[i])
+    u.append(u_tilt[i])
+u.remove(u[-1])
+
+"""Step2: Calculate conjugate factors"""
+c = []
+for i in range(0,number_of_element):
+    c.append((u[i]+u_tilt[i])/(u[i]-u_tilt[i]))
+
+"""Step3: Calculate the optimum shape factors"""
+b_opt = []
+for i in range(0,number_of_element):
+    b_opt.append(-2*(n**2-1)*c[i]/(n+2))
+
+"""Step4: Calculate radius of surfaces"""
+r = []
+for i in range(0,number_of_element):
+    r.append(2*(n-1)/(phi[i]*(b_opt[i]+1)))
+    r.append(2*(n-1)/(phi[i]*(b_opt[i]-1)))
+
