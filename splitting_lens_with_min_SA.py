@@ -12,7 +12,7 @@ print("num: # of lens elements ")
 print("f:   focal length in mm")
 print("n:   refractive index (ex: NBK7 = 1.5168)")
 
-system_spec = input("\n Enter num, f, and n: \n (ex: 3 100 1.5168)\n      ").split()
+system_spec = input("\n Enter num, f, and n: \n (Ex: 3 100 1.5168)\n      ").split()
 num = int(system_spec[0])
 f = float(system_spec[1])  # Focal length in mm
 n = float(system_spec[2])  # Glass material
@@ -68,5 +68,9 @@ for i in range(0,num):
     print(f"R{2*i+1} = {r[2*i]}")
     r.append(2*(n-1)/(power[i]*(b_opt[i]-1)))
     print(f"R{2*i+2} = {r[2*i+1]}")
-    
+
+print("------------------------------")
+print("End of the design table")
+print("------------------------------\n")
+
 
