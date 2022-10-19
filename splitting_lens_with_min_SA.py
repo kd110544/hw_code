@@ -12,8 +12,10 @@ print("num: # of lens elements ")
 print("f:   focal length in mm")
 print("n:   refractive index (ex: NBK7 = 1.5168)")
 
-system_spec = input("\n Enter num, f, and n: \n (Ex: 3 100 1.5168)\n      ").split()
-num = int(system_spec[0])
+# system_spec = input("\n Enter num, f, and n: \n (Ex: 3 100 1.5168)\n      ").split()
+system_spec = [3, 100, 1.5168] # NBK7
+system_spec = [3, 100, 1.8830] # LAH58
+num = int(system_spec[0])  # Number of lens elements
 f = float(system_spec[1])  # Focal length in mm
 n = float(system_spec[2])  # Glass material
 
@@ -68,6 +70,60 @@ for i in range(0,num):
     print(f"R{2*i+1} = {r[2*i]}")
     r.append(2*(n-1)/(power[i]*(b_opt[i]-1)))
     print(f"R{2*i+2} = {r[2*i+1]}")
+
+print("------------------------------")
+print("CodeV Command:\n")
+print("LEN NEW")
+if n == 1.5168:
+    glass_material = str('NBK7')
+elif n == 1.883:
+    glass_material = str('LAH58')
+else:
+    glass_material = str(n)
+
+for i in range(0,num):
+    print(f"INS S{2*i+1}")
+    print(f"RDY S{2*i+1} {r[2*i]:4g}")
+    print(f"GL1 S{2*i+1} {glass_material}")
+    print(f"INS S{2*i+2}")
+    print(f"RDY S{2*i+2} {r[2*i+1]:4g}")
+
+# Set STOP surface
+print()
+print(f"STO S1")
+print(f"DEL S{int(2*num+1)}")
+print()
+
+"""Add theickness and 0.5mm air spacing"""
+
+for i in range(0,num):
+    print(f"THI S{2*i+1} 2") # Lens thickness
+    print(f"THI S{2*i+2} 0.5") # Air spacing
+
+print("------------------------------")
+#  Show lens layout
+print("Show Lens Layout:\n")
+f_number = 5
+sys_dimension = str("MM") # in MM or IN
+layout_scale = 12 
+num_of_rays = 7
+print(f"PIM;FNO {f_number};DIM MM;YAN 0;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
+
+print("------------------------------")
+#  Set Y Angle Field
+print("Set Y Angle Field (FOV: 0, 1, and 2 degs):\n")
+print(f"PIM;FNO {f_number};DIM MM;YAN 0 1 2;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
+
+
+print("------------------------------")
+#  Set Y Angle Field
+print("Set Y Angle Field (FOV: 0, 1, and 2 degs):\n")
+print(f"PIM;FNO {f_number};DIM MM;YAN 0 1 2;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
+
+print("------------------------------")
+# Plot Third Orders Aberrations Chart
+print("Plot Third Orders Aberrations Chart:\n")
+print("in cv_macro:PlotTho.seq  SO..I")
 
 print("------------------------------")
 print("End of the design table")
