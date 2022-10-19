@@ -7,21 +7,32 @@ Program of designing a lens with minimum SA elements
 @author: Jeff Ching-wen Chan
 @Created on Mon Oct 17 15:54:34 2022
 """
-print()
+
+# debug = 1/True for debug mode; debug = 0/False for release mode
+debug = 1 
+
+if debug == True:
+    print(f"The script is running in debug mode. \n")
+else:
+    print(f"The script is running in release mode. \n")
+
 print("num: # of lens elements ")
 print("f:   focal length in mm")
 print("n:   refractive index (ex: NBK7 = 1.5168)")
 
-# system_spec = input("\n Enter num, f, and n: \n (Ex: 3 100 1.5168)\n      ").split()
-system_spec = [3, 100, 1.5168] # NBK7
-system_spec = [3, 100, 1.8830] # LAH58
+if debug == True:
+    system_spec = [3, 100, 1.5168] # NBK7
+    # system_spec = [3, 100, 1.8830] # LAH58
+else:
+    system_spec = input("\n Enter num, f, and n: \n (Ex: 3 100 1.5168)\n      ").split()
+
 num = int(system_spec[0])  # Number of lens elements
 f = float(system_spec[1])  # Focal length in mm
 n = float(system_spec[2])  # Glass material
 
 print(f"\n You enter the system spec: num={num}, f={f}, n={n} ")
 print("\n------------------------------")
-print(f"Design table for {num} element lens system with minimum SA: ")
+print(f"Design table for {num} element lens system with minimum SA ")
 print("------------------------------")
 
 print("System Power\n")
@@ -99,26 +110,20 @@ print()
 for i in range(0,num):
     print(f"THI S{2*i+1} 2") # Lens thickness
     print(f"THI S{2*i+2} 0.5") # Air spacing
-
+print("PIM")
 print("------------------------------")
 #  Show lens layout
 print("Show Lens Layout:\n")
 f_number = 5
 sys_dimension = str("MM") # in MM or IN
-layout_scale = 12 
+layout_scale = 0
 num_of_rays = 7
-print(f"PIM;FNO {f_number};DIM MM;YAN 0;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
+print(f"FNO {f_number};DIM MM;YAN 0;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
 
 print("------------------------------")
 #  Set Y Angle Field
 print("Set Y Angle Field (FOV: 0, 1, and 2 degs):\n")
-print(f"PIM;FNO {f_number};DIM MM;YAN 0 1 2;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
-
-
-print("------------------------------")
-#  Set Y Angle Field
-print("Set Y Angle Field (FOV: 0, 1, and 2 degs):\n")
-print(f"PIM;FNO {f_number};DIM MM;YAN 0 1 2;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
+print(f"FNO {f_number};DIM MM;YAN 0 1 2;VIE;RAT DEF;FAN 0 {num_of_rays};SSI {layout_scale};GO")
 
 print("------------------------------")
 # Plot Third Orders Aberrations Chart
@@ -126,7 +131,26 @@ print("Plot Third Orders Aberrations Chart:\n")
 print("in cv_macro:PlotTho.seq  SO..I")
 
 print("------------------------------")
-print("End of the design table")
-print("------------------------------\n")
+# Use Radii as variables to constrain EFL to [?]mm
+print(f"Use Radii as variables to constrain EFL to {f:g}mm :\n")
+for i in range(0,num):
+    print(f"CCY S{2*i+1} 0")
+    print(f"CCY S{2*i+2} 0")
+print("aut;efl=100;go")
 
+print("------------------------------")
+print("End of the design table")
+print("------------------------------\n\n\n")
+
+print("Calcualte Error Function")
+if debug == True:
+    rms = [0.005, 0.011, 0.029] 
+else:
+    rms = input(" Enter RMS_i: \n (RMS_i is the spot diameter at i [deg] of object field angle.) \n (Ex: 0.005 0.011 0.029)\n      ").split()
+
+rms_sum = 0
+for j in range(0,len(rms)):
+    rms_sum = rms_sum + float(rms[j])**2
+erf = rms_sum**0.5
+print(f"\n ERF = {erf:.6g} [mm]")
 
