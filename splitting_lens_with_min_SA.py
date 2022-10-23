@@ -9,7 +9,7 @@ Program of designing a lens with minimum SA elements
 """
 
 # debug = 1/True for debug mode; debug = 0/False for release mode
-debug = 1 
+debug = 0
 
 if debug == True:
     print(f"The script is running in debug mode. \n")
