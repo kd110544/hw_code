@@ -47,7 +47,8 @@ luminance_c = brdf * illuminance_c
 import numpy as np
 import matplotlib.pyplot as plt
 
-d65 = np.loadtxt("d65.txt")
+# d65 = np.loadtxt("d65.txt")
+d65 = np.loadtxt("/Users/cwchan/code/hw_code/d65.txt")
 d65wavelength = []
 d65flux = []
 
@@ -66,7 +67,8 @@ plt.ylim(((0,1)))
 plt.grid()
 plt.savefig('q4_D65_Spectrum.png')
 
-cie = np.loadtxt("cie1931xyz.txt")
+# cie = np.loadtxt("cie1931xyz.txt")
+cie = np.loadtxt("/Users/cwchan/code/hw_code/cie1931xyz.txt")
 ciewavelength = []
 ciex = []
 ciey = []
@@ -136,19 +138,12 @@ plt.title('1931 CIE Chromaticity Diagram')
 plt.xlabel('x')
 plt.ylabel('y')
 plt.grid()
-plt.savefig('q4_CIE_Chromaticity_Diagram.png')
+# plt.savefig('q4_CIE_Chromaticity_Diagram.png')
 answer_q4 = [normalized_X,normalized_Y,normalized_Z]
 
 print('[X,Y,Z]='+str(answer_q4))
 
-#%%
-
-
-
-
 #%% TODO:
-
-
 
 plt.figure(figsize=(6,5),dpi=300)
 plt.plot(x,y,'ro')
@@ -189,7 +184,9 @@ print(str(power_all[0])+'='+str(power_all[1]))
 import numpy as np
 import matplotlib.pyplot as plt
 
-cie = np.loadtxt("cie1931xyz.txt")
+# cie = np.loadtxt("cie1931xyz.txt")
+cie = np.loadtxt("/Users/cwchan/code/hw_code/cie1931xyz.txt")
+
 ciewavelength = []
 ciex = []
 ciey = []
@@ -293,7 +290,9 @@ print(f"u': {u_bar} \nv': {v_bar}")
 import numpy as np
 import matplotlib.pyplot as plt
 
-d65 = np.loadtxt("d65.txt")
+# d65 = np.loadtxt("d65.txt")
+d65 = np.loadtxt("/Users/cwchan/code/hw_code/d65.txt")
+
 d65wavelength = []
 d65flux = []
 
@@ -311,7 +310,9 @@ plt.xticks(np.linspace(350,850,11))
 plt.ylim(((0,1)))
 plt.grid()
 
-cie = np.loadtxt("cie1931xyz.txt")
+# cie = np.loadtxt("cie1931xyz.txt")
+cie = np.loadtxt("/Users/cwchan/code/hw_code/cie1931xyz.txt")
+
 ciewavelength = []
 ciex = []
 ciey = []
@@ -395,14 +396,16 @@ plt.title('1976 Universal Chromaticity Scale (UCS)')
 plt.xlabel("u'")
 plt.ylabel("v'")
 plt.grid()
-plt.savefig('q5d_CIELUC_Plot.png')
+# plt.savefig('q5d_CIELUC_Plot.png')
 
 #%% HW0-5e
 # Luminous Efficacy of Radiation (LER)
 import numpy as np
 import matplotlib.pyplot as plt
 
-cie = np.loadtxt("cie1931xyz.txt")
+# cie = np.loadtxt("cie1931xyz.txt")
+cie = np.loadtxt("/Users/cwchan/code/hw_code/cie1931xyz.txt")
+
 ciewavelength = []
 ciex = []
 ciey = []
